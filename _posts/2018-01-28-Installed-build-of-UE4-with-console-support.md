@@ -64,12 +64,9 @@ If you have a look at the default [InstalledEngineBuild.xml](https://github.com/
 I then just set the console platform flags to true, to override those settings:
 
 ```
-bat "${env.WORKSPACE}/Engine/Engine/Build/BatchFiles/RunUAT.bat" BuildGraph 
--target="Make Installed Build Win64" 
--script="${env.WORKSPACE}/Engine/Build/InstalledEngineBuild.xml" 
--set:HostPlatformOnly=true -set:WithPS4=true 
--set:WithXboxOne=true -set:WithSwitch=true 
--set:SavedOutput=V:/UE4Consoles
+bat "${env.WORKSPACE}/Engine/Engine/Build/BatchFiles/RunUAT.bat" BuildGraph -target="Make Installed Build Win64" 
+	-script="${env.WORKSPACE}/Engine/Build/InstalledEngineBuild.xml" -set:HostPlatformOnly=true -set:WithDDC=false
+	-set:WithPS4=true -set:WithXboxOne=true -set:WithSwitch=true -SavedOutput=V:/UE4
 ```
 
  One hour and half later, when the compilation finished, I realized that the output folder did not contain any console specific files...
@@ -77,11 +74,16 @@ bat "${env.WORKSPACE}/Engine/Engine/Build/BatchFiles/RunUAT.bat" BuildGraph
 I then removed the HostPlatformOnly option, and manually set every platform flag we need to true, and the platforms we don't need to false:
 
 ```
-bat "${env.WORKSPACE}/Engine/Engine/Build/BatchFiles/RunUAT.bat" BuildGraph 
--target="Make Installed Build Win64" -script="${env.WORKSPACE}/Engine/Build/InstalledEngineBuild.xml" 
--set:WithWin64=true -set:WithPS4=true -set:WithXboxOne=true -set:WithSwitch=true 
--set:WithWin32=false -set:WithMac=false -set:WinLinux=false -set:WithIOS=false 
--set:WithAndroid=false -set:WithTVOS=false -set:WithHTML5=false -set:SavedOutput=V:/UE4Consoles
+bat "${env.WORKSPACE}/Engine/Engine/Build/BatchFiles/RunUAT.bat" BuildGraph	-target="Make Installed Build Win64" 
+	-script="${env.WORKSPACE}/Engine/Build/InstalledEngineBuild.xml" -set:WithDDC=false 
+	-set:WithWin64=true -set:WithPS4=true -set:WithXboxOne=true -set:WithSwitch=true 
+	-set:WithWin32=false -set:WithMac=false -set:WinLinux=false -set:WithIOS=false 
+	-set:WithAndroid=false -set:WithTVOS=false -set:WithHTML5=false -SavedOutput=V:/UE4
 ```
 
 After an even longer compilation time (which was a good sign after all), I generated the Visual Studio solution file of our game, using that new Installed Engine as the source folder. And I was happy to see that the console platforms were correctly added to the project, and that I could deploy to the consoles directly from the editor.
+
+I got some additional informations from these links. You may find those useful too:
+
+- [How to BuildGraph?](http://jackknobel.com/How-To/BuildGraph)
+- [Building an Installed UE4](http://jackknobel.com/BuildGraph/Building-an-installed-ue4/)
