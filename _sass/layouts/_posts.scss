@@ -14,7 +14,7 @@ article {
     margin: 0;
   }
   .post-content {
-    @extend %padding-regular;
+    padding: $padding-x-small $padding-large;
   }
   header {
     @extend %padding-small;

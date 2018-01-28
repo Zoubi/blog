@@ -9,11 +9,11 @@ theme_settings:
   avatar: assets/img/avatar.png
   favicon: assets/favicon.ico
   gravatar: # Email MD5 hash
-  description: "Posts about game development and other programming stuff" # used by search engines
+  description: "Game development and other programming stuff" # used by search engines
 
   # Header and footer text
   header_text: >
-     <p>Posts about game development and other programming stuff.</p>
+     <p>Game development and other programming stuff.</p>
   header_text_feature_image:
   footer_text: >
    Powered by <a href="https://jekyllrb.com/">Jekyll</a> with <a href="https://github.com/rohanchandra/type-theme">Type Theme</a>

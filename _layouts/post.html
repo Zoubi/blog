@@ -7,23 +7,24 @@ layout: default
     {% if page.subtitle %}<h2 class="subtitle">{{ page.subtitle }}</h2>{% endif %}
     <p class="meta">
       {{ page.date | date: "%B %-d, %Y" }}
-      {% if page.author %} - {{ page.author }}{% endif %}
+      {% if page.author %} - {{ page.author }}{% endif %} - 
+      {% include tags_list.html tags=page.tags tag_count=page.tags.size %}
     </p>
   </header>
   <section class="post-content">
     {{ content }}
-    {% include tags_list.html tags=page.tags tag_count=page.tags.size %}
   </section>
 </article>
 
 <!-- Disqus -->
-{% if site.theme_settings.disqus_shortname %}
+<!-- {% if site.theme_settings.disqus_shortname %}
 <div class="comments">
   {% include disqus.html %}
 </div>
-{% endif %}
+{% endif %} -->
 
 <!-- Post navigation -->
-{% if site.theme_settings.post_navigation %}
+<!-- {% if site.theme_settings.post_navigation %}
   {% include post_nav.html %}
 {% endif %}
+ -->
