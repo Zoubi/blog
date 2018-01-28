@@ -3,7 +3,6 @@
 }
 article,
 .comments {
-  @extend %padding-regular;
   border-bottom: 1px solid $border-color;
   float: left;
   width: 100%;
@@ -14,9 +13,15 @@ article {
     font-weight: normal;
     margin: 0;
   }
+  .post-content {
+    @extend %padding-regular;
+  }
   header {
-    margin-bottom: 6%;
+    @extend %padding-small;
+    //margin-bottom: 6%;
+    //padding: $padding-x-small;
     text-align: center;
+    background-color: $header-desc-background-color;
   }
   a {
     @extend .body-link;
