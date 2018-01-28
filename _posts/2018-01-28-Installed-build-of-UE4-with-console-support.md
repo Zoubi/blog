@@ -1,5 +1,5 @@
 ---
-published: false
+published: true
 layout: post
 title: Installed build of UE4 with console support
 tags:
@@ -34,39 +34,39 @@ To build only Windows applications and tools, without the iOS, Nac and Android. 
 
 ```
 <Do If="'$(HostPlatformOnly)' == true">
-		<!-- Activate correct Target Platforms for host -->
-		<Switch>
-			<Case If="'$(HostPlatform)' == 'Win64'">
-				<Property Name="WithWin64" Value="true"/>
-				<Property Name="WithWin32" Value="true"/>
-				<Property Name="WithMac" Value="false"/>
-				<Property Name="WithLinux" Value="false"/>
-			</Case>
-			<Case If="'$(HostPlatform)' == 'Mac'">
-				<Property Name="WithWin64" Value="false"/>
-				<Property Name="WithWin32" Value="false"/>
-				<Property Name="WithMac" Value="true"/>
-				<Property Name="WithLinux" Value="false"/>
-			</Case>
-			<Case If="'$(HostPlatform)' == 'Linux'">
-				<Property Name="WithWin64" Value="false"/>
-				<Property Name="WithWin32" Value="false"/>
-				<Property Name="WithMac" Value="false"/>
-				<Property Name="WithLinux" Value="true"/>
-			</Case>
-			<Default>
-				<Error Message="$(HostPlatform) is not supported for making an installed build"/>
-			</Default>
-		</Switch>
-		<!-- Other Target Platforms always disabled -->
-		<Property Name="WithAndroid" Value="false"/>
-		<Property Name="WithIOS" Value="false"/>
-		<Property Name="WithTVOS" Value="false"/>
-		<Property Name="WithHTML5" Value="false"/>
-		<Property Name="WithPS4" Value="false"/>
-		<Property Name="WithXboxOne" Value="false"/>
-		<Property Name="WithSwitch" Value="false"/>
-	</Do>
+	<!-- Activate correct Target Platforms for host -->
+	<Switch>
+		<Case If="'$(HostPlatform)' == 'Win64'">
+			<Property Name="WithWin64" Value="true"/>
+			<Property Name="WithWin32" Value="true"/>
+			<Property Name="WithMac" Value="false"/>
+			<Property Name="WithLinux" Value="false"/>
+		</Case>
+		<Case If="'$(HostPlatform)' == 'Mac'">
+			<Property Name="WithWin64" Value="false"/>
+			<Property Name="WithWin32" Value="false"/>
+			<Property Name="WithMac" Value="true"/>
+			<Property Name="WithLinux" Value="false"/>
+		</Case>
+		<Case If="'$(HostPlatform)' == 'Linux'">
+			<Property Name="WithWin64" Value="false"/>
+			<Property Name="WithWin32" Value="false"/>
+			<Property Name="WithMac" Value="false"/>
+			<Property Name="WithLinux" Value="true"/>
+		</Case>
+		<Default>
+			<Error Message="$(HostPlatform) is not supported for making an installed build"/>
+		</Default>
+	</Switch>
+	<!-- Other Target Platforms always disabled -->
+	<Property Name="WithAndroid" Value="false"/>
+	<Property Name="WithIOS" Value="false"/>
+	<Property Name="WithTVOS" Value="false"/>
+	<Property Name="WithHTML5" Value="false"/>
+	<Property Name="WithPS4" Value="false"/>
+	<Property Name="WithXboxOne" Value="false"/>
+	<Property Name="WithSwitch" Value="false"/>
+</Do>
 ```
 
 I thought by manually setting WithPS4, WithXboxOne and WithSwitch manually in the command arguments would have overriden these settings. One hour and half later I realized it did not.
