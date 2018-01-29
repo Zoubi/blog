@@ -22,7 +22,7 @@ We have a job on our [Jenkins ](https://jenkins.io/) continuous integration serv
 
 Pretty easy isn't it?
 
-If you have a look at the default [InstalledEngineBuild.xml](https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Build/InstalledEngineBuild.xml) you will notice that if you set HostPlatformOnly to true, that will unset the other platforms:
+If you have a look at the default [InstalledEngineBuild.xml](https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Build/InstalledEngineBuild.xml) you will notice that if setting HostPlatformOnly to true, will unset the other platform flags:
 
 ```
 <Do If="'$(HostPlatformOnly)' == true">
@@ -69,7 +69,9 @@ bat "${env.WORKSPACE}/Engine/Engine/Build/BatchFiles/RunUAT.bat" BuildGraph -tar
 	-set:WithPS4=true -set:WithXboxOne=true -set:WithSwitch=true -SavedOutput=V:/UE4
 ```
 
- One hour and half later, when the compilation finished, I realized that the output folder did not contain any console specific files...
+One hour and half later, when the compilation finished, I realized that the output folder did not contain any console specific files... 
+
+If you look at what is done inside the **HostPlatformOnly** block, you will notice that all the platform flags are **Properties**, with the same name as the **Options** in the beginning of the file.  I suppose there is a limitation of the system which makes impossible to override a **Property** by an **Option**.
 
 I then removed the HostPlatformOnly option, and manually set every platform flag we need to true, and the platforms we don't need to false:
 
@@ -83,7 +85,9 @@ bat "${env.WORKSPACE}/Engine/Engine/Build/BatchFiles/RunUAT.bat" BuildGraph	-tar
 
 After an even longer compilation time (which was a good sign after all), I generated the Visual Studio solution file of our game, using that new Installed Engine as the source folder. And I was happy to see that the console platforms were correctly added to the project, and that I could deploy to the consoles directly from the editor.
 
-I got some additional informations from these links. You may find those useful too:
+You may find those links useful:
 
 - [How to BuildGraph?](http://jackknobel.com/How-To/BuildGraph)
 - [Building an Installed UE4](http://jackknobel.com/BuildGraph/Building-an-installed-ue4/)
+
+The second link in particular explains how to update the BuildGraph XML to add an extra parameter which will tell where the generated files should be copied over, which is useful to export the engine in a shared location.
