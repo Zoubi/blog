@@ -16,15 +16,19 @@ article {
   .post-content {
     padding: $padding-x-small $padding-large;
   }
+  a {
+    @extend .body-link;
+  }
   header {
     @extend %padding-small;
     //margin-bottom: 6%;
     //padding: $padding-x-small;
     text-align: center;
     background-color: $header-desc-background-color;
-  }
-  a {
-    @extend .body-link;
+
+    a {
+        color: #fff;
+    }
   }
   .footnotes {
     font-size: 0.9em;

@@ -14,7 +14,7 @@ To ease the development and allow us better iteration times, we thought of using
 
 It turns out it is very possible, and very easy to do :)
 
-The process is the same we use to compile our game, and to check the pull requests we want to merge do not break the code or the assets. 
+The process is the same one we use to compile our game, and to check the pull requests we want to merge do not break the code or the assets.
 
 We have a job on our [Jenkins ](https://jenkins.io/) continuous integration server, which polls on the develop branch of the fork of the engine. Whenever a new commit has been pushed on that branch, the job is executed and two simple steps happen:
 - Checkout the branch locally
@@ -22,7 +22,13 @@ We have a job on our [Jenkins ](https://jenkins.io/) continuous integration serv
 
 Pretty easy isn't it?
 
-If you have a look at the default [InstalledEngineBuild.xml](https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Build/InstalledEngineBuild.xml) you will notice that if setting HostPlatformOnly to true, will unset the other platform flags:
+About the second step, the [documentation](https://docs.unrealengine.com/latest/INT/Programming/Development/InstalledBuildReference/index.html) gives us the basic skeleton of the command:
+
+```
+BuildGraph -target="Make Installed Build [PLATFORM]" -script=Engine/Build/InstalledEngineBuild.xml -clean
+```
+
+And after a look at the default [InstalledEngineBuild.xml](https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Build/InstalledEngineBuild.xml) you will notice that there are a bunch of options we can use to tweak the build. The first option being **HostPlatformOnly** which, when set to true, will unset the other platform flags:
 
 ```
 <Do If="'$(HostPlatformOnly)' == true">
@@ -61,26 +67,26 @@ If you have a look at the default [InstalledEngineBuild.xml](https://github.com/
 </Do>
 ```
 
-I then just set the console platform flags to true, to override those settings:
+This lead me to this initial command :
 
 ```
 bat "${env.WORKSPACE}/Engine/Engine/Build/BatchFiles/RunUAT.bat" BuildGraph -target="Make Installed Build Win64" 
-	-script="${env.WORKSPACE}/Engine/Build/InstalledEngineBuild.xml" -set:HostPlatformOnly=true -set:WithDDC=false
-	-set:WithPS4=true -set:WithXboxOne=true -set:WithSwitch=true -SavedOutput=V:/UE4
+    -script="${env.WORKSPACE}/Engine/Build/InstalledEngineBuild.xml" -set:HostPlatformOnly=true -set:WithDDC=false
+    -set:WithPS4=true -set:WithXboxOne=true -set:WithSwitch=true
 ```
 
 One hour and half later, when the compilation finished, I realized that the output folder did not contain any console specific files... 
 
-If you look at what is done inside the **HostPlatformOnly** block, you will notice that all the platform flags are **Properties**, with the same name as the **Options** in the beginning of the file.  I suppose there is a limitation of the system which makes impossible to override a **Property** by an **Option**.
+If you look at what is done inside the *HostPlatformOnly* block, you will notice that all the platform flags are **Properties**, with the same name as the **Options** in the beginning of the file.  I suppose there is a limitation of the system which makes impossible to override a **Property** by an **Option**.
 
-I then removed the HostPlatformOnly option, and manually set every platform flag we need to true, and the platforms we don't need to false:
+I then removed the *HostPlatformOnly* option, and manually set every platform flag we need to true, and the platforms we don't need to false:
 
 ```
-bat "${env.WORKSPACE}/Engine/Engine/Build/BatchFiles/RunUAT.bat" BuildGraph	-target="Make Installed Build Win64" 
-	-script="${env.WORKSPACE}/Engine/Build/InstalledEngineBuild.xml" -set:WithDDC=false 
-	-set:WithWin64=true -set:WithPS4=true -set:WithXboxOne=true -set:WithSwitch=true 
-	-set:WithWin32=false -set:WithMac=false -set:WinLinux=false -set:WithIOS=false 
-	-set:WithAndroid=false -set:WithTVOS=false -set:WithHTML5=false -SavedOutput=V:/UE4
+bat "${env.WORKSPACE}/Engine/Engine/Build/BatchFiles/RunUAT.bat" BuildGraph -target="Make Installed Build Win64" 
+    -script="${env.WORKSPACE}/Engine/Build/InstalledEngineBuild.xml" -set:WithDDC=false 
+    -set:WithWin64=true -set:WithPS4=true -set:WithXboxOne=true -set:WithSwitch=true 
+    -set:WithWin32=false -set:WithMac=false -set:WinLinux=false -set:WithIOS=false 
+    -set:WithAndroid=false -set:WithTVOS=false -set:WithHTML5=false
 ```
 
 After an even longer compilation time (which was a good sign after all), I generated the Visual Studio solution file of our game, using that new Installed Engine as the source folder. And I was happy to see that the console platforms were correctly added to the project, and that I could deploy to the consoles directly from the editor.
@@ -90,4 +96,4 @@ You may find those links useful:
 - [How to BuildGraph?](http://jackknobel.com/How-To/BuildGraph)
 - [Building an Installed UE4](http://jackknobel.com/BuildGraph/Building-an-installed-ue4/)
 
-The second link in particular explains how to update the BuildGraph XML to add an extra parameter which will tell where the generated files should be copied over, which is useful to export the engine in a shared location.
+The second link in particular explains how to update the BuildGraph XML to add an extra parameter to set where the installed build files should be copied over, which is useful to export the engine in a shared location.
