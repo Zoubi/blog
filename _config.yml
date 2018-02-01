@@ -16,7 +16,8 @@ theme_settings:
      <p>Game development and other programming stuff</p>
   header_text_feature_image:
   footer_text: >
-   Powered by <a href="https://jekyllrb.com/">Jekyll</a> with <a href="https://github.com/rohanchandra/type-theme">Type Theme</a>
+   <p>Text content © Michael Delva. Code snippets are public domain, unless specified otherwise.</p>
+   <p>Powered by <a href="https://jekyllrb.com/">Jekyll</a> with <a href="https://github.com/rohanchandra/type-theme">Type Theme</a></p>
 
   # Icons
   rss: true
