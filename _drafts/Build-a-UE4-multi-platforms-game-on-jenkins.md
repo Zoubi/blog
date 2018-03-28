@@ -40,7 +40,9 @@ Without further ado, here is the last iteration of our jenkinsfile, with comment
 
 {% highlight groovy %}
 
-// if the job to run targets a branch which is already being built, cancel the already running job
+env.PROJECT_NAME = "YourGameName"
+
+// If the job to run targets a branch which is already being built, cancel the already running job
 abortPreviousRunningBuilds()
 
 def tasks = [:]
@@ -48,7 +50,7 @@ def tasks = [:]
 // Expose some properties in the UI of jenkins when we run the job manually
 properties([
     parameters([
-        string( name: "ROOT_DEPLOY_DIRECTORY", defaultValue: 'V:/ShiftQuantum', trim: true ),
+        string( name: "ROOT_ARCHIVE_DIRECTORY", defaultValue: 'V:/', trim: true ),
         booleanParam( name : "DEPLOY_BUILD", defaultValue: false )
     ]),
     buildDiscarder( logRotator( numToKeepStr: '1' ) )
@@ -56,8 +58,8 @@ properties([
 
 stage( 'Check parameters' ) {
     try {
-        if ( params.ROOT_DEPLOY_DIRECTORY == "" ) {
-            error "ROOT_DEPLOY_DIRECTORY must be set !"
+        if ( params.ROOT_ARCHIVE_DIRECTORY == "" ) {
+            error "ROOT_ARCHIVE_DIRECTORY must be set !"
         }
     } catch ( Exception err ) {
         slackSend channel: 'jenkins', color: 'danger', message: "Build failed : ${env.JOB_NAME} (<${env.BUILD_URL}|Open>)"
@@ -96,9 +98,6 @@ a few jobs are running
                     sendMessageToSlack( "Build started", it, "#0000FF" )
                     checkout scm
                 }
-
-                // Do not specify the platform. The build tool will automatically create one for us
-                env.DEPLOY_DIRECTORY = "${params.ROOT_DEPLOY_DIRECTORY}/${env.CLIENT_CONFIG}"
 
                 try {
                     // Always build manually the editor due to a bug: 
@@ -171,7 +170,7 @@ def sendMessageToSlack( String message, String platform, String color, String su
 // Manually build the editor of the game using UnrealBuiltTool
 def buildEditor( String platform ) {
     stage ( "Build Editor Win64 for " + platform ) {
-        bat getUE4DirectoryFolder() + "/Engine/Binaries/DotNET/UnrealBuildTool.exe ShiftQuantumEditor Win64 Development " + env.WORKSPACE + "/ShiftQuantum.uproject"
+        bat getUE4DirectoryFolder() + "/Engine/Binaries/DotNET/UnrealBuildTool.exe ${env.PROJECT_NAME}Editor Win64 Development ${env.WORKSPACE}/${env.PROJECT_NAME}.uproject"
     }
 }
 
@@ -203,13 +202,17 @@ def getWorkSpace() {
     return getWorkSpaceRootFolder() + getWorkSpaceFolderName()
 }
 
+def getArchiveDirectory( String client_config ) {
+    return env.ROOT_ARCHIVE_DIRECTORY + env.PROJECT_NAME + "/" + client_config
+}
+
 def getWorkSpaceFolderName() {
     // Shipping jobs always run on the master node, in a specific folder
     if ( env.DEPLOYMENT_ENVIRONMENT == "shipping" ) {
-        return "Jenkins_ShiftQuantum_Master"
+        return "Jenkins_${env.PROJECT_NAME}_Master"
     } else {
         // Use same folder for PRs and develop since we now have multiple nodes working in parallel
-        return "Jenkins_ShiftQuantum"
+        return "Jenkins_${env.PROJECT_NAME}"
     }
 }
 
@@ -239,7 +242,7 @@ def getUE4DirectoryFolder() {
 }
 
 def getUATCommonArguments( String platform ) {
-    String result = getUE4DirectoryFolder() + "/Engine/Build/BatchFiles/RunUAT.bat BuildCookRun -project=" + env.WORKSPACE + "/ShiftQuantum.uproject -utf8output -noP4 -platform=" + platform + " -clientconfig=" + env.CLIENT_CONFIG
+    String result = getUE4DirectoryFolder() + "/Engine/Build/BatchFiles/RunUAT.bat BuildCookRun -project=${env.WORKSPACE}/${env.PROJECT_NAME}.uproject -utf8output -noP4 -platform=" + platform + " -clientconfig=" + env.CLIENT_CONFIG
 
     result += getUATCompileFlags()
 
@@ -268,7 +271,7 @@ def getUATCookArguments( String platform, String client_config, Boolean archive_
     result += getUATCookArgumentsForPlatform( platform )
 
     if ( archive_project ) {
-        result += " -pak -package -stage -archive -archivedirectory=" + env.DEPLOY_DIRECTORY
+        result += " -pak -package -stage -archive -archivedirectory=" + getArchiveDirectory( client_config )
     }
 
     return result;
@@ -317,6 +320,7 @@ def executePlatformPostCookCommands( String platform ) {
     }
 }
 
+// Note you will have to add some exceptions in the Jenkins security options to allow this function to run
 def abortPreviousRunningBuilds() {
   def hi = Jenkins.instance
   def pname = env.JOB_NAME.split('/')[0]
@@ -337,7 +341,7 @@ def abortPreviousRunningBuilds() {
 }
 {% endhighlight %}
 
-That's a pretty big file, result of many weeks of iteration. 
+That's a pretty big file, result of many weeks of iteration. It could be more consistent when using environment variables or function arguments, but at least it gets the job done for us :)
 
 I hope you will find it useful. You can find that file here. 
 
