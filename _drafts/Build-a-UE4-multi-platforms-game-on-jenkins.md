@@ -13,21 +13,39 @@ The problem with that approach, is that we often had cases where the game was br
 
 This is why we used a continuous integration tool, Jenkins, to do all those checks for us.
 
-In summary, here are what we wanted Jenkins to automate for us:
+In summary, here is what we wanted Jenkins to automate for us:
 * for each opened PR: cook only the Win64 platform, compile all platforms
 * for the currently opened feature branch : cook and compile all platforms
 * for the develop and master branches: cook, compile, archive all platforms
 
-you don't always know before a branch is merged in develop, that it's impossible to cook the game data
+First, let's head to Jenkins and add a new job of type [Multibranch pipeline](https://jenkins.io/doc/book/pipeline/multibranch/#creating-a-multibranch-pipeline). We have 2 kinds of branches we need to find on GitHub, which must trigger a job on Jenkins : Pull requests and some regular branches (develop and master).
+
+We then need 2 behaviours to discover the branches:
+
+* Pull requests:
 
 ![My helpful screenshot]({{ "/assets/img/jenkins_multibranch_pull_requests_config.png" | absolute_url }})
+
+Notice the advanced clone behaviours section which will allow to not download the entire repository history, which will speed up the job, and lower the disk footprint.
+
+* Branches:
+
 ![My helpful screenshot]({{ "/assets/img/jenkins_multibranch_branch_config.png" | absolute_url }})
 
-```
+We keep the same clone behaviours section, we manually filter the branches we are interested in, in the filter section.
+
+The last thing to setup is to tell jenkins where to find the [Jenkinsfile](https://jenkins.io/doc/book/pipeline/jenkinsfile/), which is basically a configuration file written in [Groovy](http://groovy-lang.org/). In our case, we use a scripted jenkins file (as opposed to a declarative jenkins file).
+
+Without further ado, here is the last iteration of our jenkinsfile, with comments to explain some portions of the code:
+
+{% highlight groovy %}
+
+// if the job to run targets a branch which is already being built, cancel the already running job
 abortPreviousRunningBuilds()
 
 def tasks = [:]
 
+// Expose some properties in the UI of jenkins when we run the job manually
 properties([
     parameters([
         string( name: "ROOT_DEPLOY_DIRECTORY", defaultValue: 'V:/ShiftQuantum', trim: true ),
@@ -47,6 +65,11 @@ stage( 'Check parameters' ) {
     }
 }
 
+/* 
+Each platform will be built in parallel. Parallelize accross all the slaves
+Better parallelize each platform than each pull request, to save time when only 
+a few jobs are running
+*/
 [ 'Win64', 'XboxOne', 'PS4', 'Switch' ].each {
     tasks[ it ] = {
 
@@ -56,11 +79,15 @@ stage( 'Check parameters' ) {
 
         String labels = getNodeLabels()
 
+        // Some jobs must be executed exclusively on a dedicated node of jenkins
         node( labels ) {
+            // Some nodes store the job workspace (and the UE4 installed build) 
+            // in a different directory
             env.WORKSPACE = getWorkSpace()
 
             ws( env.WORKSPACE ) {
 
+                // For shipping builds, clear to force a full rebuild + full cook
                 if ( env.DEPLOYMENT_ENVIRONMENT == "shipping" ) {
                     deleteDir()
                 }
@@ -74,7 +101,10 @@ stage( 'Check parameters' ) {
                 env.DEPLOY_DIRECTORY = "${params.ROOT_DEPLOY_DIRECTORY}/${env.CLIENT_CONFIG}"
 
                 try {
+                    // Always build manually the editor due to a bug: 
+                    // using RunUAT does not always compile the UE4Editor-XXX.dll
                     buildEditor( it )
+                    // Do the actual build cook run; All specialized work is handled here
                     buildCookRun( it )
                     sendMessageToSlack( "Successfully processed", it, "good" )
                 } catch ( Exception err ) {
@@ -87,7 +117,12 @@ stage( 'Check parameters' ) {
     }
 }
 
+// Run all tasks; We are done!
 parallel tasks
+
+// ------------------------------------//
+// All the helper functions used above //
+// ------------------------------------//
 
 def getBranchType( String branch_name ) {
     if ( branch_name =~ ".*develop" ) {
@@ -118,6 +153,7 @@ def getClientConfig( String environment_deployment ) {
         return "Shipping"
     }
 
+    // release and development return Development
     return "Development"
 }
 
@@ -132,28 +168,30 @@ def sendMessageToSlack( String message, String platform, String color, String su
     slackSend channel: 'jenkins', color: color, message: full_message
 }
 
+// Manually build the editor of the game using UnrealBuiltTool
 def buildEditor( String platform ) {
     stage ( "Build Editor Win64 for " + platform ) {
         bat getUE4DirectoryFolder() + "/Engine/Binaries/DotNET/UnrealBuildTool.exe ShiftQuantumEditor Win64 Development " + env.WORKSPACE + "/ShiftQuantum.uproject"
-        warnings canComputeNew: false, canResolveRelativePaths: false, categoriesPattern: '', consoleParsers: [[parserName: 'MSBuild'], [parserName: 'UE4BlueprintCompiler']], defaultEncoding: '', excludePattern: '', healthy: '', includePattern: '', messagesPattern: '', unHealthy: ''
     }
 }
 
 def buildCookRun( String platform ) {
 
     // Dont archive for bugfix / hotfix / etc...
-    Boolean can_archive_project = ( env.DEPLOYMENT_ENVIRONMENT == "development" || env.DEPLOYMENT_ENVIRONMENT == "shipping" )
+    Boolean can_archive_project = ( env.DEPLOYMENT_ENVIRONMENT == "development" 
+        || env.DEPLOYMENT_ENVIRONMENT == "shipping" )
+
     // Cook if we want to archive (obviously) and always cook on Win64 to check PRs won't break
     Boolean can_cook_project = can_archive_project || ( platform == "Win64" )
 
     stage ( "Build " + platform ) {
         bat getUATCommonArguments( platform ) + getUATBuildArguments()
-        warnings canComputeNew: false, canResolveRelativePaths: false, categoriesPattern: '', consoleParsers: [[parserName: 'MSBuild'], [parserName: 'UE4BlueprintCompiler']], defaultEncoding: '', excludePattern: '', healthy: '', includePattern: '', messagesPattern: '', unHealthy: ''
     }
 
     if ( can_cook_project ) {
         stage ( "Cook " + platform ) {
 
+            // Some platforms may need specific commands to be executed before the cooker starts
             executePlatformPreCookCommands( platform )
             bat getUATCommonArguments( platform ) + getUATCookArguments( platform, env.CLIENT_CONFIG, can_archive_project )
             executePlatformPostCookCommands( platform )
@@ -166,6 +204,7 @@ def getWorkSpace() {
 }
 
 def getWorkSpaceFolderName() {
+    // Shipping jobs always run on the master node, in a specific folder
     if ( env.DEPLOYMENT_ENVIRONMENT == "shipping" ) {
         return "Jenkins_ShiftQuantum_Master"
     } else {
@@ -200,7 +239,6 @@ def getUE4DirectoryFolder() {
 }
 
 def getUATCommonArguments( String platform ) {
-    // -nocompile to win some seconds because automation tools are already built on the build server
     String result = getUE4DirectoryFolder() + "/Engine/Build/BatchFiles/RunUAT.bat BuildCookRun -project=" + env.WORKSPACE + "/ShiftQuantum.uproject -utf8output -noP4 -platform=" + platform + " -clientconfig=" + env.CLIENT_CONFIG
 
     result += getUATCompileFlags()
@@ -213,10 +251,13 @@ def getUATCommonArguments( String platform ) {
 }
 
 def getUATCompileFlags() {
+    // -nocompile because we already have the automation tools
+    // -nocompileeditor because we built it before
     return " -nocompile -nocompileeditor -installed -ue4exe=UE4Editor-Cmd.exe"
 }
 
 def getUATBuildArguments() {
+    // build only. dont cook. This is done in a separate stage
     return " -build -skipcook"
 }
 
@@ -234,9 +275,11 @@ def getUATCookArguments( String platform, String client_config, Boolean archive_
 }
 
 def getUATCookArgumentsFromClientConfig( String client_config ) {
+    // Do not cook what has already been cooked if possible
     if ( client_config == "Development" ) {
         return " -iterativecooking"
     }
+    // but not in shipping; Do a full cook.
     else if ( client_config == "Shipping" ) {
         return " -distribution"
     }
@@ -292,4 +335,10 @@ def abortPreviousRunningBuilds() {
     }
   }
 }
-```
+{% endhighlight %}
+
+That's a pretty big file, result of many weeks of iteration. 
+
+I hope you will find it useful. You can find that file here. 
+
+Do not hesitate to comment, to give your suggestions!
