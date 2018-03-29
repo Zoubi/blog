@@ -343,6 +343,6 @@ def abortPreviousRunningBuilds() {
 
 That's a pretty big file, result of many weeks of iteration. It could be more consistent when using environment variables or function arguments, but at least it gets the job done for us :)
 
-I hope you will find it useful. You can find that file here. 
+I hope you will find it useful. You can find that file [here](https://github.com/Zoubi/UE4JenkinsScripts/blob/master/UE4Game_Jenkinsfile). 
 
 Do not hesitate to comment, to give your suggestions!
