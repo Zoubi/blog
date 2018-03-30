@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Build a UE4 multi-platforms game on Jenkins
+title: Multi-platforms UE4 game on Jenkins
 category: UE4
 tags: [ UE4, Jenkins, GitHub ]
 ---
@@ -300,10 +300,10 @@ def getUATCookArgumentsForPlatform( String platform ) {
 
     if ( params.DEPLOY_BUILD ) {
         if ( platform == "PS4" ) {
-            result += " -deploy -cmdline=\" -Messaging\" -device=PS4@192.168.2.217"
+            result += " -deploy -cmdline=\" -Messaging\" -device=PS4@192.168.XXX.XXX"
         }
         else if ( platform == "XboxOne" ) {
-            result += " -deploy -cmdline=\" -Messaging\" -device=XboxOne@192.168.1.13"
+            result += " -deploy -cmdline=\" -Messaging\" -device=XboxOne@192.168.YYY.YYY"
         }
     }
 
