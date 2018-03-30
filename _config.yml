@@ -81,7 +81,7 @@ plugins:
   - jekyll-paginate
   - jemoji
   - jekyll-sitemap
-theme: jekyll-theme-type
+# theme: jekyll-theme-type
 exclude:
   - Gemfile
   - Gemfile.lock

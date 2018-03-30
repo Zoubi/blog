@@ -1,4 +1,5 @@
 ---
+published: true
 layout: post
 title: Multi-platforms UE4 game on Jenkins
 category: UE4
