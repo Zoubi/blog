@@ -20,21 +20,23 @@ In summary, here is what we wanted Jenkins to automate for us:
 
 First, let's head to Jenkins and add a new job of type [Multibranch pipeline](https://jenkins.io/doc/book/pipeline/multibranch/#creating-a-multibranch-pipeline). We have 2 kinds of branches we need to find on GitHub, which must trigger a job on Jenkins : Pull requests and some regular branches (develop and master).
 
-We then need 2 behaviours to discover the branches:
+We then need 2 *Branch Sources* entries to discover the branches:
 
 * Pull requests:
 
-![My helpful screenshot]({{ "/assets/img/jenkins_multibranch_pull_requests_config.png" | absolute_url }})
+![Pull Requests config]({{ "/assets/img/jenkins_multibranch_pull_requests_config.png" | absolute_url }})
 
 Notice the advanced clone behaviours section which will allow to not download the entire repository history, which will speed up the job, and lower the disk footprint.
 
 * Branches:
 
-![My helpful screenshot]({{ "/assets/img/jenkins_multibranch_branch_config.png" | absolute_url }})
+![Branches config]({{ "/assets/img/jenkins_multibranch_branch_config.png" | absolute_url }})
 
 We keep the same clone behaviours section, we manually filter the branches we are interested in, in the filter section.
 
 The last thing to setup is to tell jenkins where to find the [Jenkinsfile](https://jenkins.io/doc/book/pipeline/jenkinsfile/), which is basically a configuration file written in [Groovy](http://groovy-lang.org/). In our case, we use a scripted jenkins file (as opposed to a declarative jenkins file).
+
+![Jenkinsfile config]({{ "/assets/img/jenkins_multibranch_other_config.png" | absolute_url }})
 
 Without further ado, here is the last iteration of our jenkinsfile, with comments to explain some portions of the code:
 
@@ -343,6 +345,6 @@ def abortPreviousRunningBuilds() {
 
 That's a pretty big file, result of many weeks of iteration. It could be more consistent when using environment variables or function arguments, but at least it gets the job done for us :)
 
-I hope you will find it useful. You can find that file [here](https://github.com/Zoubi/UE4JenkinsScripts/blob/master/UE4Game_Jenkinsfile). 
+I hope you will find it useful. You can find that file [here](https://github.com/Zoubi/UE4JenkinsScripts/blob/master/UE4Game_Jenkinsfile)., along a few other scripts we use here.
 
 Do not hesitate to comment, to give your suggestions!
