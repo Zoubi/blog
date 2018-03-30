@@ -24,13 +24,13 @@ Pretty easy isn't it?
 
 About the second step, the [documentation](https://docs.unrealengine.com/latest/INT/Programming/Development/InstalledBuildReference/index.html) gives us the basic skeleton of the command:
 
-```
+{% highlight terminal %}
 BuildGraph -target="Make Installed Build [PLATFORM]" -script=Engine/Build/InstalledEngineBuild.xml -clean
-```
+{% endhighlight %}
 
 And after a look at the default [InstalledEngineBuild.xml](https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Build/InstalledEngineBuild.xml) you will notice that there are a bunch of options we can use to tweak the build. The first option being **HostPlatformOnly** which, when set to true, will unset the other platform flags:
 
-```
+{% highlight xml %}
 <Do If="'$(HostPlatformOnly)' == true">
   <!-- Activate correct Target Platforms for host -->
   <Switch>
@@ -65,15 +65,15 @@ And after a look at the default [InstalledEngineBuild.xml](https://github.com/Ep
   <Property Name="WithXboxOne" Value="false"/>
   <Property Name="WithSwitch" Value="false"/>
 </Do>
-```
+{% endhighlight %}
 
 This lead me to this initial command :
 
-```
+{% highlight terminal %}
 bat "${env.WORKSPACE}/Engine/Engine/Build/BatchFiles/RunUAT.bat" BuildGraph -target="Make Installed Build Win64" 
     -script="${env.WORKSPACE}/Engine/Build/InstalledEngineBuild.xml" -set:HostPlatformOnly=true -set:WithDDC=false
     -set:WithPS4=true -set:WithXboxOne=true -set:WithSwitch=true
-```
+{% endhighlight %}
 
 One hour and half later, when the compilation finished, I realized that the output folder did not contain any console specific files... 
 
@@ -81,13 +81,13 @@ If you look at what is done inside the *HostPlatformOnly* block, you will notice
 
 I then removed the *HostPlatformOnly* option, and manually set every platform flag we need to true, and the platforms we don't need to false:
 
-```
+{% highlight terminal %}
 bat "${env.WORKSPACE}/Engine/Engine/Build/BatchFiles/RunUAT.bat" BuildGraph -target="Make Installed Build Win64" 
     -script="${env.WORKSPACE}/Engine/Build/InstalledEngineBuild.xml" -set:WithDDC=false 
     -set:WithWin64=true -set:WithPS4=true -set:WithXboxOne=true -set:WithSwitch=true 
     -set:WithWin32=false -set:WithMac=false -set:WinLinux=false -set:WithIOS=false 
     -set:WithAndroid=false -set:WithTVOS=false -set:WithHTML5=false
-```
+{% endhighlight %}
 
 After an even longer compilation time (which was a good sign after all), I generated the Visual Studio solution file of our game, using that new Installed Engine as the source folder. And I was happy to see that the console platforms were correctly added to the project, and that I could deploy to the consoles directly from the editor.
 
