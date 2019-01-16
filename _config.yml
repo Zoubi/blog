@@ -71,6 +71,10 @@ theme_settings:
 paginate: 5
 paginate_path: "blog/page:num"
 
+# COLLECTIONS
+collections:
+  publications:
+
 # BUILD SETTINGS
 markdown: kramdown
 highlighter: rouge
