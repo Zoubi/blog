@@ -1,0 +1,182 @@
+- name: Games
+
+  projects:
+
+  - name: Ary and the Secret of Seasons
+    platforms: PS4, Switch, Win, XB1
+    engine: Unity
+    date: 2020(WIP)
+    img: ary.jpg
+    external_url: https://ary-game.com/
+    url_txt: Website
+
+  - name: Shift Quantum
+    platforms: PS4, Switch, Win, XB1
+    engine: UE4
+    date: 2018
+    img: shiftquantum.jpg
+    external_url: http://shiftquantum.com/
+    url_txt: Website
+  
+  - name: Urbance Clans Card Battle
+    platforms: PC
+    engine: Unity
+    date: 2017
+    img: urbancecards.jpg
+    external_url: https://store.steampowered.com/app/872550/Urbance_Clans_Card_Battle/
+    url_txt: Website
+
+  - name: Mon p'tit bout
+    platforms: iOS, Android
+    engine: Unity
+    date: 2016
+    img: monptitbout.jpg
+    external_url: https://www.kisskissbankbank.com/en/projects/mon-ptit-bout/tabs/description
+    url_txt: Website
+
+  - name: Chicken Town
+    platforms: iOS, Android
+    engine: Unity
+    date: 2015
+    img: chickentown.jpg
+
+  - name: Creatures Online (Cancelled)
+    platforms: iOS, Android, macOS, Windows
+    engine: Mojito
+    date: 2011-2013
+    img: creatures.png
+    external_url: http://gaming.fishingcactus.com/en/projects/games_creatures.htm
+    url_txt: Website
+
+  - name: Il est con ce pigeon
+    platforms: iOS, Android
+    engine: Mojito
+    date: 2012
+    img: concepigeon.png
+    external_url: http://gaming.fishingcactus.com/en/projects/games_creatures.htm
+    url_txt: Website
+
+  - name: Paf le chien - Rugby World Cup
+    platforms: iOS, Android
+    engine: Mojito
+    date: 2011
+    img: pafrugby.png
+    external_url: http://gaming.fishingcactus.com/en/projects/games_creatures.htm
+    url_txt: Website
+
+- name: Credits
+
+  projects:
+
+  - name: Wormworld Saga
+    platforms: PS4, Switch, Win, XB1
+    engine: Unity
+    date: 2020(WIP)
+
+  - name: Nanotale
+    platforms: Win, macOS, Linux
+    engine: Unity
+    date: 2019(WIP)
+    img: nanotale.jpg
+    external_url: https://store.steampowered.com/app/944920/Nanotale__Typing_Chronicles/
+    url_txt: Website
+
+  - name: Algobot
+    platforms: Win, macOS, Linux
+    engine: Unity
+    date: 2017
+    img: algobot.png
+    external_url: http://www.algo-bot.com/
+    url_txt: Website
+
+  - name: Epistory
+    platforms: Win, macOS, Linux
+    engine: Unity
+    date: 2016
+    img: epistory.jpg
+    external_url: https://store.steampowered.com/app/398850/Epistory__Typing_Chronicles/
+    url_txt: Steam
+
+  - name: JIRA
+    platforms: Android
+    engine: Mojito
+    date: 2015
+    description: JIRA (Jeu Indoor en Réalité Augmentée) is a framework we developed on top of Mojito to build AR applications to be used in exhibitions. It is currently deployed at <a href="http://www.mundaneum.org/en" target="_blank">Le Mudaneum</a>
+
+  - name: ROGER
+    platforms: Win Kinect
+    engine: Mojito
+    date: 2011-2015
+    description: R.O.G.E.R, developed in collaboration with renowned neuro psychologists, is 3D simulation designed to help medical practitioners diagnose brain-damaged patients.
+    external_url: http://seriousgaming.fishingcactus.com/en/Projets/Roger/roger_ulb_hemi_negligence_kinect_medical.html
+    url_txt: Website
+    img: roger.png
+
+  - name: Survivor
+    platforms: 3DS, iOS, Android
+    engine: Mojito
+    date: 2014
+    img: survivor.jpg
+    external_url: https://itunes.apple.com/be/app/survivor-clash-heroes-free/id923938830?mt=8
+    url_txt: AppStore
+    publisher: BigBen Interactive
+
+  - name: Shifting World
+    platforms: 3DS
+    engine: Mojito
+    date: 2013
+    img: shiftingworld.png
+    external_url: http://www.aksysgames.com/products/shifting-world/
+    url_txt: Website
+    publisher: Aksys games
+
+  - name: Algobot (Serious Game)
+    platforms: Win
+    engine: Mojito
+    date: 2013
+    img: algobot_serious.png
+
+  - name: Slash Monsters
+    platforms: iOS, Android
+    engine: Mojito
+    date: 2012
+    img: slashmonsters.png
+
+  - name: IndestructoTank
+    platforms: iOS, Android
+    engine: Mojito
+    date: 2012
+    img: indestructotank.jpg
+
+  - name: After Burner Climax
+    platforms: iOS, Android
+    engine: Mojito
+    date: 2011
+    img: abc.png
+    external_url: https://www.youtube.com/watch?v=Fj2cymFVZdk
+    url_txt: Youtube
+    publisher: Sega
+
+  - name: Trenches
+    platforms: iOS, Wii
+    engine: Mojito
+    date: 2011
+    img: trenches.jpg
+    external_url: https://itunes.apple.com/fr/app/trenches-generals/id431074398?mt=8]
+    url_txt: AppStore
+
+  - name: Manny Pacquiao::Pound for Pound
+    platforms: iOS
+    engine: Mojito
+    date: 2011
+    external_url: https://www.youtube.com/watch?v=wA4kGv_39Ho
+    url_txt: Youtube
+    img: manny.jpg
+
+#   projects:
+
+#   - name: SOACPP
+#     date: 2018
+#     description: a modern c++ single header library for structure of arrays
+#     external_url: https://github.com/rams3s/soacpp
+#     url_txt: Github
