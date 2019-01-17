@@ -5,7 +5,9 @@ permalink: /publications/
 ---
 
 {% for publication in site.publications %}
-  <h2>{{ publication.title }}</h2>
-  <a href="{{ publication.link }}"><img src="{{ site.baseurl }}/assets/img/{{ publication.image }}" alt="{{ publication.book }}" /></a>
-  <p>{{ publication.authors }}</p>
+<div class="publication">
+    <a href="{{ publication.link }}"><img class="preview" src="{{ site.baseurl }}/assets/img/{{ publication.image }}" alt="{{ publication.book }}" /></a>
+    <h3>{{ publication.title }}</h3>
+    <p>{{ publication.authors }}</p>
+</div>
 {% endfor %}
