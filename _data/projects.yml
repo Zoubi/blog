@@ -2,6 +2,14 @@
 
   projects:
 
+  - name: Faeria (Console port)
+    platforms: PS4, Switch, XB1
+    engine: Unity
+    date: 2021
+    img: Faeria.png
+    external_url: https://www.faeria.com/
+    url_txt: Website
+
   - name: Ary and the Secret of Seasons
     platforms: PS4, Switch, Win, XB1
     engine: Unity
@@ -68,6 +76,14 @@
 
   projects:
 
+  - name: Omno
+    platforms: Win
+    engine: Unity
+    img: omno.png
+    date: 2021(WIP)
+    external_url: https://www.playomno.com/
+    url_txt: Website
+
   - name: Wormworld Saga
     platforms: PS4, Switch, Win, XB1
     engine: Unity
@@ -76,7 +92,7 @@
   - name: Nanotale
     platforms: Win, macOS, Linux
     engine: Unity
-    date: 2019(WIP)
+    date: 2021
     img: nanotale.jpg
     external_url: https://store.steampowered.com/app/944920/Nanotale__Typing_Chronicles/
     url_txt: Website
