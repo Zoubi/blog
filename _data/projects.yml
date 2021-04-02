@@ -10,10 +10,10 @@
     external_url: https://www.faeria.com/
     url_txt: Website
 
-  - name: Ary and the Secret of Seasons
+  - name: Ary and the Secret of Seasons (Console port)
     platforms: PS4, Switch, Win, XB1
     engine: Unity
-    date: 2020(WIP)
+    date: 2020
     img: ary.jpg
     external_url: https://ary-game.com/
     url_txt: Website
