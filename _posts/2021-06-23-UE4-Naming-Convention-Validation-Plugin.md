@@ -1,5 +1,5 @@
 ---
-published: false
+published: true
 layout: post
 title: UE4 Naming Convention Validation plugin
 category: UE4
@@ -12,9 +12,12 @@ Let's start with the [Naming Convention Validation plugin](https://github.com/Th
 
 This plugin has the same base as the DataValidation plugin from UE. It provides the same editor context menu options, to validate naming of individual assets, or assets in a folder. It can also be run as a commandlet, on a continuous integration system for example. It will then output all the errors it could find in the log, which you can then parse using regular expressions for example.
 
-But first things first, you can access the plugin configuration in the project settings. You have different basic options which are self-explanatory, but the real deal is with the Class Descriptions property.
+But first things first, you can access the plugin configuration in the project settings. You have different basic options which are self-explanatory.
 
 ![Settings]({{ "/assets/img/namingconventionvalidation/Settings1.png" | absolute_url }})
+
+But the real deal is with the Class Descriptions property:
+
 ![Class Descriptions]({{ "/assets/img/namingconventionvalidation/Settings2.png" | absolute_url }})
 
 This is in the class descriptions that you can specify which prefix and / or suffix are required in the name of assets, depending on their type. If an asset matches multiple descriptions, there's the Priority property to filter them out.
@@ -44,3 +47,7 @@ On one of our projects, we trigger that commandlet using Buildgraph, using the f
 ```
 
 After the commandlet is run, all the errors will be written in the log file, which you can parse using regular expressions. 
+
+That's it for the quick presentation of that plugin. Thanks to it, we now enforce a real consistency in how the assets are named. This makes searching for assets in the editor faster, but has also other advantages, like avoiding errors when there's a need to programatically construct a path to an asset.
+
+The plugin is open source, has a permissive licence, so feel free to use it! Of course, pull requests are opened if you want to contribute to the project.
